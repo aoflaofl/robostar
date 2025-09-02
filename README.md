@@ -13,11 +13,11 @@ A minimal, playable dual-stick arcade shooter prototype inspired by **Robotron**
 
 ## Build & Run
 ```bash
-# from project root
+# from project root build all modules
 mvn -q package
-java -jar target/hybrid-arcade-shooter-1.0.0-SNAPSHOT-shaded.jar
-# or run directly
-mvn -q exec:java
+
+# run the desktop launcher
+mvn -q -pl desktop exec:java
 ```
 
 ## Controls (Gamepad only)
