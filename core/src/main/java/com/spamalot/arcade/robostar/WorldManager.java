@@ -44,9 +44,11 @@ class WorldManager {
   float bossBuildProgress = 0f; // increased by Gatherers "delivering"
 
   private final CollisionHandler collisionHandler;
+  private final EventDispatcher dispatcher;
 
-  WorldManager(GameRoot game) {
+  WorldManager(GameRoot game, EventDispatcher dispatcher) {
     this.game = game;
+    this.dispatcher = dispatcher;
     this.camera = new OrthographicCamera(GameRoot.VIEW_W, GameRoot.VIEW_H);
     this.viewport = new FitViewport(GameRoot.VIEW_W, GameRoot.VIEW_H, camera);
     camera.position.set(GameRoot.VIEW_W / 2f, GameRoot.VIEW_H / 2f, 0);
@@ -63,9 +65,6 @@ class WorldManager {
     time += delta;
     spawnTimer += delta;
     waveTimer += delta;
-
-    bossBuildProgress = Math.min(1f, bossBuildProgress + GameBus.bossBuildAdd);
-    GameBus.bossBuildAdd = 0f;
 
     input.update();
 
@@ -129,11 +128,11 @@ class WorldManager {
       spawnTimer = 0f;
       int type = MathUtils.random(2);
       if (type == 0) {
-        enemies.add(Enemy.hunter(randWorld()));
+        enemies.add(Enemy.hunter(randWorld(), dispatcher));
       } else if (type == 1) {
-        enemies.add(Enemy.gatherer(randWorld()));
+        enemies.add(Enemy.gatherer(randWorld(), dispatcher));
       } else {
-        enemies.add(Enemy.converter(randWorld()));
+        enemies.add(Enemy.converter(randWorld(), dispatcher));
       }
       if (MathUtils.randomBoolean(0.6f)) {
         crystals.add(Pickup.crystal(randWorld()));
@@ -202,13 +201,13 @@ class WorldManager {
       humans.add(Pickup.human(randWorld()));
     }
     for (int i = 0; i < 15; i++) {
-      enemies.add(Enemy.hunter(randWorld()));
+      enemies.add(Enemy.hunter(randWorld(), dispatcher));
     }
     for (int i = 0; i < 10; i++) {
-      enemies.add(Enemy.gatherer(randWorld()));
+      enemies.add(Enemy.gatherer(randWorld(), dispatcher));
     }
     for (int i = 0; i < 6; i++) {
-      enemies.add(Enemy.converter(randWorld()));
+      enemies.add(Enemy.converter(randWorld(), dispatcher));
     }
   }
 
@@ -222,14 +221,18 @@ class WorldManager {
     boss = null;
     bossBuildProgress = 0f;
     for (int i = 0; i < 10 + wave * 3; i++) {
-      enemies.add(Enemy.hunter(randWorld()));
+      enemies.add(Enemy.hunter(randWorld(), dispatcher));
     }
     for (int i = 0; i < 6 + wave * 2; i++) {
-      enemies.add(Enemy.gatherer(randWorld()));
+      enemies.add(Enemy.gatherer(randWorld(), dispatcher));
     }
     for (int i = 0; i < 4 + wave; i++) {
-      enemies.add(Enemy.converter(randWorld()));
+      enemies.add(Enemy.converter(randWorld(), dispatcher));
     }
+  }
+
+  void addBossBuildProgress(float amt) {
+    bossBuildProgress = Math.min(1f, bossBuildProgress + amt);
   }
 
 }

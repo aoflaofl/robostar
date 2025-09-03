@@ -17,32 +17,34 @@ public class Enemy {
   private float radius = 10f;
   private boolean alive = true;
   private float carryCrystal = 0f; // for gatherers
+  private final EventDispatcher dispatcher;
 
-  public Enemy(Type type, Vector2 start) {
+  public Enemy(Type type, Vector2 start, EventDispatcher dispatcher) {
     this.type = type;
     this.pos.set(start);
+    this.dispatcher = dispatcher;
   }
 
-  public static Enemy hunter(Vector2 at) {
-    Enemy e = new Enemy(Type.HUNTER, at);
+  public static Enemy hunter(Vector2 at, EventDispatcher dispatcher) {
+    Enemy e = new Enemy(Type.HUNTER, at, dispatcher);
     e.radius = 10f;
     return e;
   }
 
-  public static Enemy gatherer(Vector2 at) {
-    Enemy e = new Enemy(Type.GATHERER, at);
+  public static Enemy gatherer(Vector2 at, EventDispatcher dispatcher) {
+    Enemy e = new Enemy(Type.GATHERER, at, dispatcher);
     e.radius = 9f;
     return e;
   }
 
-  public static Enemy converter(Vector2 at) {
-    Enemy e = new Enemy(Type.CONVERTER, at);
+  public static Enemy converter(Vector2 at, EventDispatcher dispatcher) {
+    Enemy e = new Enemy(Type.CONVERTER, at, dispatcher);
     e.radius = 11f;
     return e;
   }
 
-  public static Enemy zombie(Vector2 at) {
-    Enemy e = new Enemy(Type.ZOMBIE, at);
+  public static Enemy zombie(Vector2 at, EventDispatcher dispatcher) {
+    Enemy e = new Enemy(Type.ZOMBIE, at, dispatcher);
     e.radius = 9f;
     return e;
   }
@@ -130,12 +132,8 @@ public class Enemy {
     return best;
   }
 
-  // --- Hack: communicate progress to the active PlayScreen bossBuildProgress ---
   private void bossBuildProgressInc(float amt) {
-    // This is a placeholder hack, but we can't reference PlayScreen directly.
-    // In a more structured ECS, you'd use events. For the prototype,
-    // we'll simply update a global in GameBus. See GameBus class.
-    GameBus.bossBuildAdd += amt;
+    dispatcher.publish(new BossBuildProgressEvent(amt));
   }
 
   public void render(ShapeRenderer s) {
