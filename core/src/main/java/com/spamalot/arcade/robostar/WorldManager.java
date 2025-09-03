@@ -1,0 +1,203 @@
+package com.spamalot.arcade.robostar;
+
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+/**
+ * Maintains world state and updates entities.
+ */
+class WorldManager {
+    final GameRoot game;
+    final Camera camera;
+    final Viewport viewport;
+
+    final Player player;
+    final Array<Bullet> bullets = new Array<>();
+    final Array<Bomb> bombs = new Array<>();
+    final Array<Enemy> enemies = new Array<>();
+    final Array<Pickup> crystals = new Array<>();
+    final Array<Pickup> humans = new Array<>();
+    final Array<Explosion> explosions = new Array<>();
+
+    final Rectangle worldBounds;
+
+    int score = 0;
+    int lives = 3;
+    int wave = 1;
+    int crystalsCollected = 0;
+    int bombsAvailable = 0;
+
+    float time = 0f;
+    float spawnTimer = 0f;
+    float waveTimer = 0f;
+    float waveLength = 55f; // seconds until boss auto-spawns
+
+    Boss boss = null;
+    float bossBuildProgress = 0f; // increased by Gatherers "delivering"
+
+    private final CollisionHandler collisionHandler;
+
+    WorldManager(GameRoot game) {
+        this.game = game;
+        this.camera = new OrthographicCamera(GameRoot.VIEW_W, GameRoot.VIEW_H);
+        this.viewport = new FitViewport(GameRoot.VIEW_W, GameRoot.VIEW_H, camera);
+        camera.position.set(GameRoot.VIEW_W / 2f, GameRoot.VIEW_H / 2f, 0);
+
+        worldBounds = new Rectangle(0, 0, GameRoot.WORLD_W, GameRoot.WORLD_H);
+
+        player = new Player(new Vector2(GameRoot.WORLD_W / 2f, GameRoot.WORLD_H / 2f));
+
+        spawnField();
+        collisionHandler = new CollisionHandler(this);
+    }
+
+    void update(float delta, InputController input) {
+        time += delta;
+        spawnTimer += delta;
+        waveTimer += delta;
+
+        bossBuildProgress = Math.min(1f, bossBuildProgress + GameBus.bossBuildAdd);
+        GameBus.bossBuildAdd = 0f;
+
+        input.update();
+
+        // Player movement & shooting
+        player.update(delta, input.getMove(), wrapPos(player.pos), GameRoot.WORLD_W, GameRoot.WORLD_H);
+        Vector2 aim = input.getAim();
+        if (aim.len2() > 0.08f) {
+            player.tryShoot(delta, aim, bullets);
+        }
+
+        // Bomb
+        if (input.pollBombPressed() && bombsAvailable > 0) {
+            bombsAvailable--;
+            bombs.add(new Bomb(new Vector2(player.pos), new Vector2(aim).nor().scl(240f)));
+        }
+
+        // Update bullets
+        for (int i = bullets.size - 1; i >= 0; i--) {
+            Bullet b = bullets.get(i);
+            b.update(delta, GameRoot.WORLD_W, GameRoot.WORLD_H);
+            if (!b.alive) bullets.removeIndex(i);
+        }
+
+        // Update bombs/explosions
+        for (int i = bombs.size - 1; i >= 0; i--) {
+            Bomb b = bombs.get(i);
+            b.update(delta, GameRoot.WORLD_W, GameRoot.WORLD_H);
+            if (b.exploded) {
+                explosions.add(new Explosion(new Vector2(b.pos), 1.2f));
+                bombs.removeIndex(i);
+                collisionHandler.handleBombExplosion(b);
+            }
+        }
+
+        for (int i = explosions.size - 1; i >= 0; i--) {
+            Explosion e = explosions.get(i);
+            e.update(delta);
+            if (!e.alive) explosions.removeIndex(i);
+        }
+
+        // Enemies
+        for (int i = enemies.size - 1; i >= 0; i--) {
+            Enemy e = enemies.get(i);
+            e.update(delta, player, crystals, humans, boss, GameRoot.WORLD_W, GameRoot.WORLD_H);
+        }
+
+        // Boss spawn conditions
+        if (boss == null && (waveTimer >= waveLength || bossBuildProgress >= 1f)) {
+            boss = new Boss(randWorld());
+        }
+        if (boss != null) {
+            boss.update(delta, player, GameRoot.WORLD_W, GameRoot.WORLD_H);
+        }
+
+        // Simple enemy respawn pacing (except boss)
+        if (spawnTimer > 2.5f) {
+            spawnTimer = 0f;
+            int type = MathUtils.random(2);
+            if (type == 0) enemies.add(Enemy.hunter(randWorld()));
+            else if (type == 1) enemies.add(Enemy.gatherer(randWorld()));
+            else enemies.add(Enemy.converter(randWorld()));
+            if (MathUtils.randomBoolean(0.6f)) crystals.add(Pickup.crystal(randWorld()));
+            if (MathUtils.randomBoolean(0.25f)) humans.add(Pickup.human(randWorld()));
+        }
+
+        // Handle collisions
+        collisionHandler.handle();
+
+        // Remove dead enemies
+        for (int i = enemies.size - 1; i >= 0; i--) {
+            if (!enemies.get(i).alive) enemies.removeIndex(i);
+        }
+
+        // camera follows player (wrap around)
+        camera.position.set(player.pos.x, player.pos.y, 0);
+        wrapCamera();
+        camera.update();
+    }
+
+    void render(ShapeRenderer shapes) {
+        shapes.setProjectionMatrix(camera.combined);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        player.render(shapes);
+        for (Bullet b : bullets) b.render(shapes);
+        for (Bomb b : bombs) b.render(shapes);
+        for (Enemy e : enemies) e.render(shapes);
+        for (Pickup p : crystals) p.render(shapes);
+        for (Pickup p : humans) p.render(shapes);
+        for (Explosion e : explosions) e.render(shapes);
+        if (boss != null) boss.render(shapes);
+        shapes.end();
+    }
+
+    void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
+
+    private void spawnField() {
+        MathUtils.random.setSeed(TimeUtils.millis());
+        for (int i = 0; i < 30; i++) crystals.add(Pickup.crystal(randWorld()));
+        for (int i = 0; i < 8; i++) humans.add(Pickup.human(randWorld()));
+        for (int i = 0; i < 15; i++) enemies.add(Enemy.hunter(randWorld()));
+        for (int i = 0; i < 10; i++) enemies.add(Enemy.gatherer(randWorld()));
+        for (int i = 0; i < 6; i++) enemies.add(Enemy.converter(randWorld()));
+    }
+
+    private Vector2 randWorld() {
+        return new Vector2(MathUtils.random(worldBounds.width), MathUtils.random(worldBounds.height));
+    }
+
+    void nextWave() {
+        wave++;
+        waveTimer = 0f;
+        boss = null;
+        bossBuildProgress = 0f;
+        for (int i = 0; i < 10 + wave * 3; i++) enemies.add(Enemy.hunter(randWorld()));
+        for (int i = 0; i < 6 + wave * 2; i++) enemies.add(Enemy.gatherer(randWorld()));
+        for (int i = 0; i < 4 + wave; i++) enemies.add(Enemy.converter(randWorld()));
+    }
+
+    private void wrapCamera() {
+        if (camera.position.x < 0) camera.position.x += GameRoot.WORLD_W;
+        if (camera.position.x >= GameRoot.WORLD_W) camera.position.x -= GameRoot.WORLD_W;
+        if (camera.position.y < 0) camera.position.y += GameRoot.WORLD_H;
+        if (camera.position.y >= GameRoot.WORLD_H) camera.position.y -= GameRoot.WORLD_H;
+    }
+
+    Vector2 wrapPos(Vector2 p) {
+        if (p.x < 0) p.x += GameRoot.WORLD_W;
+        else if (p.x >= GameRoot.WORLD_W) p.x -= GameRoot.WORLD_W;
+        if (p.y < 0) p.y += GameRoot.WORLD_H;
+        else if (p.y >= GameRoot.WORLD_H) p.y -= GameRoot.WORLD_H;
+        return p;
+    }
+}
