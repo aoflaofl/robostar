@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet {
-    public Vector2 pos = new Vector2();
-    public Vector2 vel = new Vector2();
-    public float radius = 3f;
-    public boolean alive = true;
+    private Vector2 pos = new Vector2();
+    private Vector2 vel = new Vector2();
+    private float radius = 3f;
+    private boolean alive = true;
     private float lifetime = 1.8f;
 
     public Bullet(Vector2 pos, Vector2 vel, float damage) {
@@ -30,5 +30,25 @@ public class Bullet {
     public void render(ShapeRenderer s) {
         s.setColor(Color.YELLOW);
         s.circle(pos.x, pos.y, radius);
+    }
+
+    public Vector2 getPos() {
+        return pos;
+    }
+
+    public Vector2 getVel() {
+        return vel;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

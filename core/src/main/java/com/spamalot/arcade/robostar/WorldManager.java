@@ -70,7 +70,7 @@ class WorldManager {
         input.update();
 
         // Player movement & shooting
-        player.update(delta, input.getMove(), wrapPos(player.pos), GameRoot.WORLD_W, GameRoot.WORLD_H);
+        player.update(delta, input.getMove(), wrapPos(player.getPos()), GameRoot.WORLD_W, GameRoot.WORLD_H);
         Vector2 aim = input.getAim();
         if (aim.len2() > 0.08f) {
             player.tryShoot(delta, aim, bullets);
@@ -79,22 +79,22 @@ class WorldManager {
         // Bomb
         if (input.pollBombPressed() && bombsAvailable > 0) {
             bombsAvailable--;
-            bombs.add(new Bomb(new Vector2(player.pos), new Vector2(aim).nor().scl(240f)));
+            bombs.add(new Bomb(new Vector2(player.getPos()), new Vector2(aim).nor().scl(240f)));
         }
 
         // Update bullets
         for (int i = bullets.size - 1; i >= 0; i--) {
             Bullet b = bullets.get(i);
             b.update(delta, GameRoot.WORLD_W, GameRoot.WORLD_H);
-            if (!b.alive) bullets.removeIndex(i);
+            if (!b.isAlive()) bullets.removeIndex(i);
         }
 
         // Update bombs/explosions
         for (int i = bombs.size - 1; i >= 0; i--) {
             Bomb b = bombs.get(i);
             b.update(delta, GameRoot.WORLD_W, GameRoot.WORLD_H);
-            if (b.exploded) {
-                explosions.add(new Explosion(new Vector2(b.pos), 1.2f));
+            if (b.isExploded()) {
+                explosions.add(new Explosion(new Vector2(b.getPos()), 1.2f));
                 bombs.removeIndex(i);
                 collisionHandler.handleBombExplosion(b);
             }
@@ -136,11 +136,11 @@ class WorldManager {
 
         // Remove dead enemies
         for (int i = enemies.size - 1; i >= 0; i--) {
-            if (!enemies.get(i).alive) enemies.removeIndex(i);
+            if (!enemies.get(i).isAlive()) enemies.removeIndex(i);
         }
 
         // camera follows player (wrap around)
-        camera.position.set(player.pos.x, player.pos.y, 0);
+        camera.position.set(player.getPos().x, player.getPos().y, 0);
         wrapCamera();
         camera.update();
     }

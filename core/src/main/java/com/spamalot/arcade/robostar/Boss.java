@@ -6,11 +6,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Boss {
-    public Vector2 pos = new Vector2();
-    public Vector2 vel = new Vector2();
-    public float radius = 42f;
-    public float hp = 220f;
-    public boolean alive = true;
+    private Vector2 pos = new Vector2();
+    private Vector2 vel = new Vector2();
+    private float radius = 42f;
+    private float hp = 220f;
+    private boolean alive = true;
 
     public Boss(Vector2 start) {
         pos.set(start);
@@ -18,7 +18,7 @@ public class Boss {
 
     public void update(float delta, Player player, float worldW, float worldH) {
         // simple chase with mild acceleration
-        Vector2 dir = new Vector2(player.pos).sub(pos).nor();
+        Vector2 dir = new Vector2(player.getPos()).sub(pos).nor();
         vel.mulAdd(dir, 60f * delta);
         vel.clamp(0, 120f);
         pos.mulAdd(vel, delta);
@@ -40,5 +40,33 @@ public class Boss {
         s.setColor(Color.PINK);
         float ring = Math.max(0, hp) / 220f;
         s.circle(pos.x, pos.y, radius + 4f * ring, 24);
+    }
+
+    public Vector2 getPos() {
+        return pos;
+    }
+
+    public Vector2 getVel() {
+        return vel;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

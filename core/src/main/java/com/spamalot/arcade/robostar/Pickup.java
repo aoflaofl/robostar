@@ -6,10 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Pickup {
     public enum Kind { CRYSTAL, HUMAN }
-    public Kind kind;
-    public Vector2 pos = new Vector2();
-    public float radius = 7f;
-    public boolean alive = true;
+    private Kind kind;
+    private Vector2 pos = new Vector2();
+    private float radius = 7f;
+    private boolean alive = true;
 
     public static Pickup crystal(Vector2 at) {
         Pickup p = new Pickup();
@@ -42,5 +42,25 @@ public class Pickup {
                 s.rect(pos.x-1, pos.y-radius-2, 2, 4); // simple "plus" accent
                 break;
         }
+    }
+
+    public Kind getKind() {
+        return kind;
+    }
+
+    public Vector2 getPos() {
+        return pos;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

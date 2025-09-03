@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bomb {
-    public Vector2 pos = new Vector2();
-    public Vector2 vel = new Vector2();
-    public boolean exploded = false;
+    private Vector2 pos = new Vector2();
+    private Vector2 vel = new Vector2();
+    private boolean exploded = false;
     private float fuse = 0.8f;
     private float radius = 6f;
 
@@ -35,5 +35,21 @@ public class Bomb {
             s.setColor(Color.RED);
             s.circle(pos.x, pos.y, radius);
         }
+    }
+
+    public Vector2 getPos() {
+        return pos;
+    }
+
+    public Vector2 getVel() {
+        return vel;
+    }
+
+    public boolean isExploded() {
+        return exploded;
+    }
+
+    public float getRadius() {
+        return radius;
     }
 }
