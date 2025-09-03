@@ -1,4 +1,4 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;

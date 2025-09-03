@@ -1,4 +1,4 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.world;
 
 import com.badlogic.gdx.math.Vector2;
 

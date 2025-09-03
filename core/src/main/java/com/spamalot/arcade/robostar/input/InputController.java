@@ -1,4 +1,4 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
