@@ -5,51 +5,61 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bomb {
-    private Vector2 pos = new Vector2();
-    private Vector2 vel = new Vector2();
-    private boolean exploded = false;
-    private float fuse = 0.8f;
-    private float radius = 6f;
+  private Vector2 pos = new Vector2();
+  private Vector2 vel = new Vector2();
+  private boolean exploded = false;
+  private float fuse = 0.8f;
+  private float radius = 6f;
 
-    public Bomb(Vector2 pos, Vector2 vel) {
-        this.pos.set(pos);
-        this.vel.set(vel);
+  public Bomb(Vector2 pos, Vector2 vel) {
+    this.pos.set(pos);
+    this.vel.set(vel);
+  }
+
+  public void update(float delta, float worldW, float worldH) {
+    if (exploded) {
+      return;
+    }
+    fuse -= delta;
+    pos.mulAdd(vel, delta);
+    vel.scl(0.995f); // decelerate slightly
+    if (fuse <= 0) {
+      exploded = true;
     }
 
-    public void update(float delta, float worldW, float worldH) {
-        if (exploded) return;
-        fuse -= delta;
-        pos.mulAdd(vel, delta);
-        vel.scl(0.995f); // decelerate slightly
-        if (fuse <= 0) exploded = true;
-
-        // wrap
-        if (pos.x < 0) pos.x += worldW;
-        else if (pos.x >= worldW) pos.x -= worldW;
-        if (pos.y < 0) pos.y += worldH;
-        else if (pos.y >= worldH) pos.y -= worldH;
+    // wrap
+    if (pos.x < 0) {
+      pos.x += worldW;
+    } else if (pos.x >= worldW) {
+      pos.x -= worldW;
     }
-
-    public void render(ShapeRenderer s) {
-        if (!exploded) {
-            s.setColor(Color.RED);
-            s.circle(pos.x, pos.y, radius);
-        }
+    if (pos.y < 0) {
+      pos.y += worldH;
+    } else if (pos.y >= worldH) {
+      pos.y -= worldH;
     }
+  }
 
-    public Vector2 getPos() {
-        return pos;
+  public void render(ShapeRenderer s) {
+    if (!exploded) {
+      s.setColor(Color.RED);
+      s.circle(pos.x, pos.y, radius);
     }
+  }
 
-    public Vector2 getVel() {
-        return vel;
-    }
+  public Vector2 getPos() {
+    return pos;
+  }
 
-    public boolean isExploded() {
-        return exploded;
-    }
+  public Vector2 getVel() {
+    return vel;
+  }
 
-    public float getRadius() {
-        return radius;
-    }
+  public boolean isExploded() {
+    return exploded;
+  }
+
+  public float getRadius() {
+    return radius;
+  }
 }

@@ -34,8 +34,9 @@ public class InputController extends ControllerAdapter {
   }
 
   public void update() {
-    if (controller == null)
+    if (controller == null) {
       return;
+    }
 
     float lx = controller.getAxis(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
     float ly = controller.getAxis(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
@@ -83,15 +84,17 @@ public class InputController extends ControllerAdapter {
 
   @Override
   public void connected(Controller controller) {
-    if (this.controller == null)
+    if (this.controller == null) {
       this.controller = controller;
+    }
     Gdx.app.log("Input", "Controller connected: " + controller.getName());
   }
 
   @Override
   public void disconnected(Controller controller) {
-    if (this.controller == controller)
+    if (this.controller == controller) {
       this.controller = null;
+    }
     Gdx.app.log("Input", "Controller disconnected.");
   }
 

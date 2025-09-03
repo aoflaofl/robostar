@@ -5,5 +5,5 @@ package com.spamalot.arcade.robostar;
  * across entities without heavy coupling. Reset per-frame by PlayScreen.
  */
 public class GameBus {
-    public static float bossBuildAdd = 0f;
+  public static float bossBuildAdd = 0f;
 }

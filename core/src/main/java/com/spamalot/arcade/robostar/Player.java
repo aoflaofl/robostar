@@ -33,36 +33,44 @@ public class Player {
 
   public void update(float delta, Vector2 moveInput, Vector2 wrapped, float worldW, float worldH) {
     // power timers
-    if (speedBuff > 0)
+    if (speedBuff > 0) {
       speedBuff -= delta;
-    if (fireBuff > 0)
+    }
+    if (fireBuff > 0) {
       fireBuff -= delta;
-    if (shield > 0)
+    }
+    if (shield > 0) {
       shield -= delta;
-    if (invuln > 0)
+    }
+    if (invuln > 0) {
       invuln -= delta;
+    }
 
     float spd = speed * (speedBuff > 0 ? 1.5f : 1f);
     vel.set(moveInput).nor().scl(spd);
     pos.add(vel.x * delta, vel.y * delta);
 
     // wrap
-    if (pos.x < 0)
+    if (pos.x < 0) {
       pos.x += worldW;
-    else if (pos.x >= worldW)
+    } else if (pos.x >= worldW) {
       pos.x -= worldW;
-    if (pos.y < 0)
+    }
+    if (pos.y < 0) {
       pos.y += worldH;
-    else if (pos.y >= worldH)
+    } else if (pos.y >= worldH) {
       pos.y -= worldH;
+    }
 
-    if (shotTimer > 0)
+    if (shotTimer > 0) {
       shotTimer -= delta;
+    }
   }
 
   public void tryShoot(float delta, Vector2 aim, Array<Bullet> out) {
-    if (shotTimer > 0)
+    if (shotTimer > 0) {
       return;
+    }
     float rate = shotCooldown * (fireBuff > 0 ? 0.55f : 1f);
     shotTimer = rate;
     Vector2 dir = new Vector2(aim).nor();
