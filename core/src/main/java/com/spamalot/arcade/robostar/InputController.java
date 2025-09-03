@@ -45,12 +45,12 @@ public class InputController extends ControllerAdapter {
     float rx;
     float ry;
     rx = controller.getAxis(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
-    ry = controller.getAxis(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
+    ry = controller.getAxis(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
     aim.set(applyDeadzone(rx, aimDeadzone), -applyDeadzone(ry, aimDeadzone));
 
     // Bomb on R1 if available, otherwise A
     boolean r1 = false;
-    r1 = controller.getButton(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+    r1 = controller.getButton(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER);
 
     boolean a = controller.getButton(GLFW.GLFW_GAMEPAD_BUTTON_A);
     bombPressed = r1 || (!r1 && a);
@@ -68,8 +68,9 @@ public class InputController extends ControllerAdapter {
   }
 
   public boolean pollBombPressed() {
-    // edge-trigger: simple polling (you could debounce if desired)
-    return bombPressed;
+    boolean pressed = bombPressed;
+    bombPressed = false;
+    return pressed;
   }
 
   public boolean isStartPressed() {
