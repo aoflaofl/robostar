@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Player {
-  public Vector2 pos = new Vector2();
-  public Vector2 vel = new Vector2();
-  public float radius = 12f;
+  private Vector2 pos = new Vector2();
+  private Vector2 vel = new Vector2();
+  private float radius = 12f;
 
   private float speed = 240f;
   private float shotCooldown = 0.12f; // seconds between shots
@@ -99,5 +99,17 @@ public class Player {
 
   public float getInvuln() {
     return invuln;
+  }
+
+  public Vector2 getPos() {
+    return pos;
+  }
+
+  public Vector2 getVel() {
+    return vel;
+  }
+
+  public float getRadius() {
+    return radius;
   }
 }

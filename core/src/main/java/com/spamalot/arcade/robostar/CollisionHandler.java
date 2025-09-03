@@ -22,10 +22,10 @@ class CollisionHandler {
 
     void handleBombExplosion(Bomb b) {
         Boss boss = world.boss;
-        if (boss != null && boss.alive && boss.pos.dst2(b.pos) < (boss.radius + 90f) * (boss.radius + 90f)) {
-            boss.hp -= 35f;
-            if (boss.hp <= 0) {
-                boss.alive = false;
+        if (boss != null && boss.isAlive() && boss.getPos().dst2(b.getPos()) < (boss.getRadius() + 90f) * (boss.getRadius() + 90f)) {
+            boss.setHp(boss.getHp() - 35f);
+            if (boss.getHp() <= 0) {
+                boss.setAlive(false);
                 world.score += 1000 * world.wave;
                 world.nextWave();
             }
@@ -37,14 +37,14 @@ class CollisionHandler {
             Enemy e = world.enemies.get(i);
             for (int j = world.bullets.size - 1; j >= 0; j--) {
                 Bullet b = world.bullets.get(j);
-                if (e.pos.dst2(b.pos) < (e.radius + b.radius) * (e.radius + b.radius)) {
-                    e.alive = false;
+                if (e.getPos().dst2(b.getPos()) < (e.getRadius() + b.getRadius()) * (e.getRadius() + b.getRadius())) {
+                    e.setAlive(false);
                     world.bullets.removeIndex(j);
                     world.score += 50;
                     break;
                 }
             }
-            if (!e.alive) {
+            if (!e.isAlive()) {
                 // handled in world.remove loop
             }
         }
@@ -53,7 +53,7 @@ class CollisionHandler {
     private void handlePlayerEnemy() {
         Player player = world.player;
         for (Enemy e : world.enemies) {
-            if (player.getInvuln() <= 0 && e.pos.dst2(player.pos) < (e.radius + player.radius) * (e.radius + player.radius)) {
+            if (player.getInvuln() <= 0 && e.getPos().dst2(player.getPos()) < (e.getRadius() + player.getRadius()) * (e.getRadius() + player.getRadius())) {
                 world.lives--;
                 player.respawn(new Vector2(GameRoot.WORLD_W / 2f, GameRoot.WORLD_H / 2f));
             }
@@ -66,11 +66,11 @@ class CollisionHandler {
 
         for (int j = world.bullets.size - 1; j >= 0; j--) {
             Bullet b = world.bullets.get(j);
-            if (boss.pos.dst2(b.pos) < (boss.radius + b.radius) * (boss.radius + b.radius)) {
-                boss.hp -= 5f;
+            if (boss.getPos().dst2(b.getPos()) < (boss.getRadius() + b.getRadius()) * (boss.getRadius() + b.getRadius())) {
+                boss.setHp(boss.getHp() - 5f);
                 world.bullets.removeIndex(j);
-                if (boss.hp <= 0) {
-                    boss.alive = false;
+                if (boss.getHp() <= 0) {
+                    boss.setAlive(false);
                     world.score += 1000 * world.wave;
                     world.nextWave();
                     return;
@@ -79,7 +79,7 @@ class CollisionHandler {
         }
 
         Player player = world.player;
-        if (player.getInvuln() <= 0 && boss.pos.dst2(player.pos) < (boss.radius + player.radius) * (boss.radius + player.radius)) {
+        if (player.getInvuln() <= 0 && boss.getPos().dst2(player.getPos()) < (boss.getRadius() + player.getRadius()) * (boss.getRadius() + player.getRadius())) {
             world.lives--;
             player.respawn(new Vector2(GameRoot.WORLD_W / 2f, GameRoot.WORLD_H / 2f));
         }
@@ -89,7 +89,7 @@ class CollisionHandler {
         Player player = world.player;
         for (int i = world.crystals.size - 1; i >= 0; i--) {
             Pickup p = world.crystals.get(i);
-            if (player.pos.dst2(p.pos) < (player.radius + p.radius) * (player.radius + p.radius)) {
+            if (player.getPos().dst2(p.getPos()) < (player.getRadius() + p.getRadius()) * (player.getRadius() + p.getRadius())) {
                 world.crystals.removeIndex(i);
                 world.crystalsCollected++;
                 world.score += 10;
@@ -101,7 +101,7 @@ class CollisionHandler {
         }
         for (int i = world.humans.size - 1; i >= 0; i--) {
             Pickup p = world.humans.get(i);
-            if (player.pos.dst2(p.pos) < (player.radius + p.radius) * (player.radius + p.radius)) {
+            if (player.getPos().dst2(p.getPos()) < (player.getRadius() + p.getRadius()) * (player.getRadius() + p.getRadius())) {
                 world.humans.removeIndex(i);
                 world.score += 150;
                 float r = MathUtils.random();
