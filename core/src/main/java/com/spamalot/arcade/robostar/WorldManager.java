@@ -70,7 +70,7 @@ class WorldManager {
     input.update();
 
     // Player movement & shooting
-    player.update(delta, input.getMove(), wrapPos(player.getPos()), GameRoot.WORLD_W, GameRoot.WORLD_H);
+    player.update(delta, input.getMove(), GameRoot.WORLD_W, GameRoot.WORLD_H);
     Vector2 aim = input.getAim();
     if (aim.len2() > 0.08f) {
       player.tryShoot(delta, aim, bullets);
@@ -155,7 +155,9 @@ class WorldManager {
 
     // camera follows player (wrap around)
     camera.position.set(player.getPos().x, player.getPos().y, 0);
-    wrapCamera();
+    Vector2 camPos = new Vector2(camera.position.x, camera.position.y);
+    WorldUtils.wrap(camPos, GameRoot.WORLD_W, GameRoot.WORLD_H);
+    camera.position.set(camPos.x, camPos.y, 0);
     camera.update();
   }
 
@@ -230,32 +232,4 @@ class WorldManager {
     }
   }
 
-  private void wrapCamera() {
-    if (camera.position.x < 0) {
-      camera.position.x += GameRoot.WORLD_W;
-    }
-    if (camera.position.x >= GameRoot.WORLD_W) {
-      camera.position.x -= GameRoot.WORLD_W;
-    }
-    if (camera.position.y < 0) {
-      camera.position.y += GameRoot.WORLD_H;
-    }
-    if (camera.position.y >= GameRoot.WORLD_H) {
-      camera.position.y -= GameRoot.WORLD_H;
-    }
-  }
-
-  Vector2 wrapPos(Vector2 p) {
-    if (p.x < 0) {
-      p.x += GameRoot.WORLD_W;
-    } else if (p.x >= GameRoot.WORLD_W) {
-      p.x -= GameRoot.WORLD_W;
-    }
-    if (p.y < 0) {
-      p.y += GameRoot.WORLD_H;
-    } else if (p.y >= GameRoot.WORLD_H) {
-      p.y -= GameRoot.WORLD_H;
-    }
-    return p;
-  }
 }

@@ -31,7 +31,7 @@ public class Player {
     invuln = 2.0f;
   }
 
-  public void update(float delta, Vector2 moveInput, Vector2 wrapped, float worldW, float worldH) {
+  public void update(float delta, Vector2 moveInput, float worldW, float worldH) {
     // power timers
     if (speedBuff > 0) {
       speedBuff -= delta;
@@ -50,17 +50,7 @@ public class Player {
     vel.set(moveInput).nor().scl(spd);
     pos.add(vel.x * delta, vel.y * delta);
 
-    // wrap
-    if (pos.x < 0) {
-      pos.x += worldW;
-    } else if (pos.x >= worldW) {
-      pos.x -= worldW;
-    }
-    if (pos.y < 0) {
-      pos.y += worldH;
-    } else if (pos.y >= worldH) {
-      pos.y -= worldH;
-    }
+    WorldUtils.wrap(pos, worldW, worldH);
 
     if (shotTimer > 0) {
       shotTimer -= delta;

@@ -23,17 +23,7 @@ public class Boss {
     vel.clamp(0, 120f);
     pos.mulAdd(vel, delta);
 
-    // wrap
-    if (pos.x < 0) {
-      pos.x += worldW;
-    } else if (pos.x >= worldW) {
-      pos.x -= worldW;
-    }
-    if (pos.y < 0) {
-      pos.y += worldH;
-    } else if (pos.y >= worldH) {
-      pos.y -= worldH;
-    }
+    WorldUtils.wrap(pos, worldW, worldH);
   }
 
   public void render(ShapeRenderer s) {
