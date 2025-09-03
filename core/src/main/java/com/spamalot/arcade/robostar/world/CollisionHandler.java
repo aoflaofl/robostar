@@ -1,7 +1,15 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.world;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import com.spamalot.arcade.robostar.GameRoot;
+import com.spamalot.arcade.robostar.entity.Bomb;
+import com.spamalot.arcade.robostar.entity.Boss;
+import com.spamalot.arcade.robostar.entity.Bullet;
+import com.spamalot.arcade.robostar.entity.Enemy;
+import com.spamalot.arcade.robostar.entity.Pickup;
+import com.spamalot.arcade.robostar.entity.Player;
 
 /**
  * Handles collision detection and responses for world entities.

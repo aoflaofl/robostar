@@ -1,4 +1,4 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.world;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,13 +11,24 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import com.spamalot.arcade.robostar.GameRoot;
+import com.spamalot.arcade.robostar.entity.Bomb;
+import com.spamalot.arcade.robostar.entity.Boss;
+import com.spamalot.arcade.robostar.entity.Bullet;
+import com.spamalot.arcade.robostar.entity.Enemy;
+import com.spamalot.arcade.robostar.entity.Explosion;
+import com.spamalot.arcade.robostar.entity.Pickup;
+import com.spamalot.arcade.robostar.entity.Player;
+import com.spamalot.arcade.robostar.event.EventDispatcher;
+import com.spamalot.arcade.robostar.input.InputController;
+
 /**
  * Maintains world state and updates entities.
  */
-class WorldManager {
-  final GameRoot game;
-  final Camera camera;
-  final Viewport viewport;
+public class WorldManager {
+  public final GameRoot game;
+  public final Camera camera;
+  public final Viewport viewport;
 
   final Player player;
   final Array<Bullet> bullets = new Array<>();
@@ -29,24 +40,24 @@ class WorldManager {
 
   final Rectangle worldBounds;
 
-  int score = 0;
-  int lives = 3;
-  int wave = 1;
-  int crystalsCollected = 0;
-  int bombsAvailable = 0;
+  public int score = 0;
+  public int lives = 3;
+  public int wave = 1;
+  public int crystalsCollected = 0;
+  public int bombsAvailable = 0;
 
   float time = 0f;
   float spawnTimer = 0f;
   float waveTimer = 0f;
   float waveLength = 55f; // seconds until boss auto-spawns
 
-  Boss boss = null;
-  float bossBuildProgress = 0f; // increased by Gatherers "delivering"
+  public Boss boss = null;
+  public float bossBuildProgress = 0f; // increased by Gatherers "delivering"
 
   private final CollisionHandler collisionHandler;
   private final EventDispatcher dispatcher;
 
-  WorldManager(GameRoot game, EventDispatcher dispatcher) {
+  public WorldManager(GameRoot game, EventDispatcher dispatcher) {
     this.game = game;
     this.dispatcher = dispatcher;
     this.camera = new OrthographicCamera(GameRoot.VIEW_W, GameRoot.VIEW_H);
@@ -61,7 +72,7 @@ class WorldManager {
     collisionHandler = new CollisionHandler(this);
   }
 
-  void update(float delta, InputController input) {
+  public void update(float delta, InputController input) {
     time += delta;
     spawnTimer += delta;
     waveTimer += delta;
@@ -160,7 +171,7 @@ class WorldManager {
     camera.update();
   }
 
-  void render(ShapeRenderer shapes) {
+  public void render(ShapeRenderer shapes) {
     shapes.setProjectionMatrix(camera.combined);
     shapes.begin(ShapeRenderer.ShapeType.Filled);
     player.render(shapes);
@@ -188,7 +199,7 @@ class WorldManager {
     shapes.end();
   }
 
-  void resize(int width, int height) {
+  public void resize(int width, int height) {
     viewport.update(width, height, true);
   }
 
@@ -231,7 +242,7 @@ class WorldManager {
     }
   }
 
-  void addBossBuildProgress(float amt) {
+  public void addBossBuildProgress(float amt) {
     bossBuildProgress = Math.min(1f, bossBuildProgress + amt);
   }
 

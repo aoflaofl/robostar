@@ -1,9 +1,12 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.screen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+import com.spamalot.arcade.robostar.GameRoot;
+import com.spamalot.arcade.robostar.world.WorldManager;
 
 /**
  * Renders HUD information such as score and boss build bar.

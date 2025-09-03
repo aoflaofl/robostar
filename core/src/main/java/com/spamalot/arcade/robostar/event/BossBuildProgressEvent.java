@@ -1,4 +1,4 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.event;
 
 /**
  * Event published when the boss build progresses.

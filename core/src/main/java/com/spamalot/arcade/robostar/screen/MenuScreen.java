@@ -1,4 +1,4 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,42 +9,51 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class GameOverScreen implements Screen {
+import com.spamalot.arcade.robostar.GameRoot;
+
+public class MenuScreen implements Screen {
   private final GameRoot game;
   private final Camera camera;
   private final Viewport viewport;
-  private final int score;
+  private float blink = 0f;
 
-  public GameOverScreen(GameRoot game, int score) {
+  public MenuScreen(GameRoot game) {
     this.game = game;
-    this.score = score;
     this.camera = new OrthographicCamera(GameRoot.VIEW_W, GameRoot.VIEW_H);
     this.viewport = new FitViewport(GameRoot.VIEW_W, GameRoot.VIEW_H, camera);
     camera.position.set(GameRoot.VIEW_W / 2f, GameRoot.VIEW_H / 2f, 0);
-    game.setHighScore(score);
   }
 
   @Override
   public void render(float delta) {
-    Gdx.gl.glClearColor(0.05f, 0, 0, 1);
+    Gdx.gl.glClearColor(0, 0, 0.05f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     camera.update();
     game.batch.setProjectionMatrix(camera.combined);
+    game.shapes.setProjectionMatrix(camera.combined);
 
     game.input.update();
 
     game.batch.begin();
-    game.font.setColor(Color.ORANGE);
-    game.font.draw(game.batch, "GAME OVER", 40, GameRoot.VIEW_H - 40);
-    game.font.setColor(Color.WHITE);
-    game.font.draw(game.batch, "Score: " + score, 40, GameRoot.VIEW_H - 80);
-    game.font.draw(game.batch, "High Score: " + game.getHighScore(), 40, GameRoot.VIEW_H - 120);
-    game.font.draw(game.batch, "Press START to return to Menu", 40, GameRoot.VIEW_H / 2f);
+    game.font.draw(game.batch, "HYBRID ARCADE SHOOTER", 40, GameRoot.VIEW_H - 40);
+    game.font.draw(game.batch, "High Score: " + game.getHighScore(), 40, GameRoot.VIEW_H - 80);
+    if (!game.input.hasController()) {
+      game.font.setColor(Color.RED);
+      game.font.draw(game.batch, "Connect a dual-stick controller to start.", 40, GameRoot.VIEW_H / 2f);
+      game.font.setColor(Color.WHITE);
+    } else {
+      blink += delta;
+      if ((int) (blink * 2) % 2 == 0) {
+        game.font.draw(game.batch, "Press START to Play", 40, GameRoot.VIEW_H / 2f);
+      }
+      game.font.draw(game.batch, "Controller: " + game.input.controllerName(), 40, GameRoot.VIEW_H / 2f - 40);
+      game.font.draw(game.batch, "Left Stick: Move   Right Stick: Aim/Fire   R1: Bomb", 40, GameRoot.VIEW_H / 2f - 80);
+    }
     game.batch.end();
 
-    if (game.input.isStartPressed()) {
-      game.setScreen(new MenuScreen(game));
+    if (game.input.hasController() && game.input.isStartPressed()) {
+      game.setScreen(new PlayScreen(game));
     }
   }
 

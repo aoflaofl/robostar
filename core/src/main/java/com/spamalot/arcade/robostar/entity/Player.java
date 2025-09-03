@@ -1,9 +1,11 @@
-package com.spamalot.arcade.robostar;
+package com.spamalot.arcade.robostar.entity;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+
+import com.spamalot.arcade.robostar.world.WorldUtils;
 
 public class Player {
   private Vector2 pos = new Vector2();

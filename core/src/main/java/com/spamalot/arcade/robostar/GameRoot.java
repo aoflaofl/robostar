@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import com.spamalot.arcade.robostar.input.InputController;
+import com.spamalot.arcade.robostar.screen.MenuScreen;
+
 public class GameRoot extends Game {
   public SpriteBatch batch;
   public ShapeRenderer shapes;
