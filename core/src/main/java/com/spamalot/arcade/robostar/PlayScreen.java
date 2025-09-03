@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
+
 /**
  * Main play screen delegating world updates and rendering.
  */
@@ -11,11 +12,14 @@ public class PlayScreen implements Screen {
   private final GameRoot game;
   private final WorldManager world;
   private final HudRenderer hud;
+  private final EventDispatcher dispatcher;
 
   public PlayScreen(GameRoot game) {
     this.game = game;
-    this.world = new WorldManager(game);
+    this.dispatcher = new SimpleEventDispatcher();
+    this.world = new WorldManager(game, dispatcher);
     this.hud = new HudRenderer(game, world);
+    dispatcher.subscribe(BossBuildProgressEvent.class, e -> world.addBossBuildProgress(e.amount()));
   }
 
   @Override
