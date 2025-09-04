@@ -20,18 +20,33 @@ public class AssetRepository {
   private final Map<Direction, TextureRegion[]> playerFrames = new EnumMap<>(Direction.class);
   private final Map<Direction, TextureRegion[]> enemyFrames = new EnumMap<>(Direction.class);
 
+  /** Additional entity textures. */
+  private Texture bulletTex;
+  private Texture bombTex;
+  private Texture crystalTex;
+  private Texture humanTex;
+  private Texture explosionTex;
+  private Texture bossTex;
+
   /** All textures that need disposing. */
   private final Array<Texture> managedTextures = new Array<>();
 
   /** Load all assets. */
   public void load() {
-    loadDirectional("player/player", playerFrames);
-    loadDirectional("enemy/enemy", enemyFrames);
+    loadDirectional("sprites/player", playerFrames);
+    loadDirectional("sprites/enemy", enemyFrames);
+
+    bulletTex = loadTexture("sprites/bullet/bullet.png");
+    bombTex = loadTexture("sprites/bomb/bomb.png");
+    crystalTex = loadTexture("sprites/pickup/crystal/crystal.png");
+    humanTex = loadTexture("sprites/pickup/human/human.png");
+    explosionTex = loadTexture("sprites/explosion/1.png");
+    bossTex = loadTexture("sprites/boss/down.png");
   }
 
   private void loadDirectional(String prefix, Map<Direction, TextureRegion[]> out) {
     for (Direction dir : Direction.values()) {
-      String path = prefix + "_" + dir.name().toLowerCase() + ".png";
+      String path = prefix + "/" + dir.name().toLowerCase() + ".png";
       FileHandle handle = Gdx.files.internal(path);
       if (!handle.exists()) {
         continue; // allow missing assets during development
@@ -46,6 +61,16 @@ public class AssetRepository {
       }
       out.put(dir, frames);
     }
+  }
+
+  private Texture loadTexture(String path) {
+    FileHandle handle = Gdx.files.internal(path);
+    if (!handle.exists()) {
+      return null;
+    }
+    Texture tex = new Texture(handle);
+    managedTextures.add(tex);
+    return tex;
   }
 
   private TextureRegion getFrame(Map<Direction, TextureRegion[]> map, Direction dir, int frame) {
@@ -64,6 +89,30 @@ public class AssetRepository {
   /** Retrieve an enemy animation frame. */
   public TextureRegion getEnemyFrame(Direction dir, int frame) {
     return getFrame(enemyFrames, dir, frame);
+  }
+
+  public Texture getBullet() {
+    return bulletTex;
+  }
+
+  public Texture getBomb() {
+    return bombTex;
+  }
+
+  public Texture getCrystal() {
+    return crystalTex;
+  }
+
+  public Texture getHuman() {
+    return humanTex;
+  }
+
+  public Texture getExplosion() {
+    return explosionTex;
+  }
+
+  public Texture getBoss() {
+    return bossTex;
   }
 
   /** Dispose of all loaded textures. */

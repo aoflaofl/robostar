@@ -2,7 +2,7 @@ package com.spamalot.arcade.robostar.world;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -171,32 +171,32 @@ public class WorldManager {
     camera.update();
   }
 
-  public void render(ShapeRenderer shapes) {
-    shapes.setProjectionMatrix(camera.combined);
-    shapes.begin(ShapeRenderer.ShapeType.Filled);
-    player.render(shapes);
+  public void render(SpriteBatch batch) {
+    batch.setProjectionMatrix(camera.combined);
+    batch.begin();
+    player.render(batch, game.assets);
     for (Bullet b : bullets) {
-      b.render(shapes);
+      b.render(batch, game.assets.getBullet());
     }
     for (Bomb b : bombs) {
-      b.render(shapes);
+      b.render(batch, game.assets.getBomb());
     }
     for (Enemy e : enemies) {
-      e.render(shapes);
+      e.render(batch, game.assets);
     }
     for (Pickup p : crystals) {
-      p.render(shapes);
+      p.render(batch, game.assets);
     }
     for (Pickup p : humans) {
-      p.render(shapes);
+      p.render(batch, game.assets);
     }
     for (Explosion e : explosions) {
-      e.render(shapes);
+      e.render(batch, game.assets.getExplosion());
     }
     if (boss != null) {
-      boss.render(shapes);
+      boss.render(batch, game.assets.getBoss());
     }
-    shapes.end();
+    batch.end();
   }
 
   public void resize(int width, int height) {

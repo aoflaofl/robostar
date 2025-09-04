@@ -1,13 +1,15 @@
 package com.spamalot.arcade.robostar.entity;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import com.spamalot.arcade.robostar.event.BossBuildProgressEvent;
 import com.spamalot.arcade.robostar.event.EventDispatcher;
+import com.spamalot.arcade.robostar.asset.AssetRepository;
+import com.spamalot.arcade.robostar.Direction;
 
 public class Enemy {
   public enum Type {
@@ -139,26 +141,20 @@ public class Enemy {
     dispatcher.publish(new BossBuildProgressEvent(amt));
   }
 
-  public void render(ShapeRenderer s) {
-    switch (type) {
-      case HUNTER:
-        s.setColor(Color.FIREBRICK);
-        break;
-      case GATHERER:
-        s.setColor(Color.CORAL);
-        break;
-      case CONVERTER:
-        s.setColor(Color.PURPLE);
-        break;
-      case ZOMBIE:
-        s.setColor(Color.GREEN);
-        break;
+  public void render(SpriteBatch batch, AssetRepository assets) {
+    TextureRegion frame = assets.getEnemyFrame(direction(), 0);
+    if (frame == null) {
+      return;
     }
-    s.circle(pos.x, pos.y, radius);
-    if (carryCrystal > 0) {
-      s.setColor(Color.CYAN);
-      s.circle(pos.x, pos.y + radius + 2, 2f);
+    float size = radius * 2f;
+    batch.draw(frame, pos.x - radius, pos.y - radius, size, size);
+  }
+
+  private Direction direction() {
+    if (Math.abs(vel.x) > Math.abs(vel.y)) {
+      return vel.x >= 0 ? Direction.RIGHT : Direction.LEFT;
     }
+    return vel.y >= 0 ? Direction.UP : Direction.DOWN;
   }
 
   public Vector2 getPos() {

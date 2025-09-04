@@ -1,8 +1,10 @@
 package com.spamalot.arcade.robostar.entity;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+
+import com.spamalot.arcade.robostar.asset.AssetRepository;
 
 public class Pickup {
   public enum Kind {
@@ -30,21 +32,13 @@ public class Pickup {
     return p;
   }
 
-  public void render(ShapeRenderer s) {
-    switch (kind) {
-      case CRYSTAL:
-        s.setColor(Color.CYAN);
-        // diamond shape
-        s.triangle(pos.x, pos.y + radius, pos.x - radius, pos.y, pos.x + radius, pos.y);
-        s.triangle(pos.x, pos.y - radius, pos.x - radius, pos.y, pos.x + radius, pos.y);
-        break;
-      case HUMAN:
-        s.setColor(Color.SKY);
-        s.circle(pos.x, pos.y, radius);
-        s.setColor(Color.WHITE);
-        s.rect(pos.x - 1, pos.y - radius - 2, 2, 4); // simple "plus" accent
-        break;
+  public void render(SpriteBatch batch, AssetRepository assets) {
+    Texture tex = kind == Kind.CRYSTAL ? assets.getCrystal() : assets.getHuman();
+    if (tex == null) {
+      return;
     }
+    float size = radius * 2f;
+    batch.draw(tex, pos.x - radius, pos.y - radius, size, size);
   }
 
   public Kind getKind() {
