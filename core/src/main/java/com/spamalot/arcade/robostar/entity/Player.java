@@ -1,11 +1,14 @@
 package com.spamalot.arcade.robostar.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import com.spamalot.arcade.robostar.world.WorldUtils;
+import com.spamalot.arcade.robostar.asset.AssetRepository;
+import com.spamalot.arcade.robostar.Direction;
 
 public class Player {
   private Vector2 pos = new Vector2();
@@ -86,15 +89,22 @@ public class Player {
     return shield > 0;
   }
 
-  public void render(ShapeRenderer s) {
-    // body
-    s.setColor(hasShield() ? Color.CYAN : (invuln > 0 ? Color.LIGHT_GRAY : Color.WHITE));
-    // draw a simple triangle ship
-    float r = radius;
-    s.triangle(pos.x + r, pos.y, pos.x - r, pos.y - r * 0.8f, pos.x - r, pos.y + r * 0.8f);
-    // simple thruster rectangle to suggest motion
-    s.setColor(Color.ORANGE);
-    s.rect(pos.x - r - 4, pos.y - 2, 6, 4);
+  public void render(SpriteBatch batch, AssetRepository assets) {
+    TextureRegion frame = assets.getPlayerFrame(direction(), 0);
+    if (frame == null) {
+      return;
+    }
+    float size = radius * 2f;
+    batch.setColor(hasShield() ? Color.CYAN : (invuln > 0 ? Color.LIGHT_GRAY : Color.WHITE));
+    batch.draw(frame, pos.x - radius, pos.y - radius, size, size);
+    batch.setColor(Color.WHITE);
+  }
+
+  private Direction direction() {
+    if (Math.abs(vel.x) > Math.abs(vel.y)) {
+      return vel.x >= 0 ? Direction.RIGHT : Direction.LEFT;
+    }
+    return vel.y >= 0 ? Direction.UP : Direction.DOWN;
   }
 
   public float getInvuln() {

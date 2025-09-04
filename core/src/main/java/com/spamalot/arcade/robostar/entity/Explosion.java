@@ -1,7 +1,8 @@
 package com.spamalot.arcade.robostar.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Explosion {
@@ -22,10 +23,14 @@ public class Explosion {
     }
   }
 
-  public void render(ShapeRenderer s) {
+  public void render(SpriteBatch batch, Texture tex) {
+    if (tex == null) {
+      return;
+    }
     float t = Math.min(1f, time / dur);
     float r = 30 + 120 * t;
-    s.setColor(new Color(1f, 0.5f * (1f - t), 0, 0.6f * (1f - t) + 0.2f));
-    s.circle(pos.x, pos.y, r, 24);
+    batch.setColor(new Color(1f, 0.5f * (1f - t), 0, 0.6f * (1f - t) + 0.2f));
+    batch.draw(tex, pos.x - r, pos.y - r, r * 2f, r * 2f);
+    batch.setColor(Color.WHITE);
   }
 }

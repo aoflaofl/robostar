@@ -1,7 +1,7 @@
 package com.spamalot.arcade.robostar.entity;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet {
@@ -35,9 +35,12 @@ public class Bullet {
     }
   }
 
-  public void render(ShapeRenderer s) {
-    s.setColor(Color.YELLOW);
-    s.circle(pos.x, pos.y, radius);
+  public void render(SpriteBatch batch, Texture tex) {
+    if (tex == null) {
+      return;
+    }
+    float size = radius * 2f;
+    batch.draw(tex, pos.x - radius, pos.y - radius, size, size);
   }
 
   public Vector2 getPos() {

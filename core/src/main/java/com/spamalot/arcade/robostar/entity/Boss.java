@@ -1,8 +1,7 @@
 package com.spamalot.arcade.robostar.entity;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import com.spamalot.arcade.robostar.world.WorldUtils;
@@ -28,16 +27,12 @@ public class Boss {
     WorldUtils.wrap(pos, worldW, worldH);
   }
 
-  public void render(ShapeRenderer s) {
-    s.setColor(Color.SCARLET);
-    s.circle(pos.x, pos.y, radius, 24);
-    // "eye"
-    s.setColor(Color.BLACK);
-    s.circle(pos.x + MathUtils.cosDeg((System.currentTimeMillis() / 10) % 360) * 10f, pos.y, 8f);
-    // health ring
-    s.setColor(Color.PINK);
-    float ring = Math.max(0, hp) / 220f;
-    s.circle(pos.x, pos.y, radius + 4f * ring, 24);
+  public void render(SpriteBatch batch, Texture tex) {
+    if (tex == null) {
+      return;
+    }
+    float size = radius * 2f;
+    batch.draw(tex, pos.x - radius, pos.y - radius, size, size);
   }
 
   public Vector2 getPos() {
