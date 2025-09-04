@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import com.spamalot.arcade.robostar.input.InputController;
+import com.spamalot.arcade.robostar.asset.AssetRepository;
 import com.spamalot.arcade.robostar.screen.MenuScreen;
 
 public class GameRoot extends Game {
@@ -16,6 +17,7 @@ public class GameRoot extends Game {
   public BitmapFont font;
   public Preferences prefs;
   public InputController input;
+  public AssetRepository assets;
 
   public static final int VIEW_W = 1280;
   public static final int VIEW_H = 720;
@@ -29,6 +31,7 @@ public class GameRoot extends Game {
     font = new BitmapFont(); // default font
     prefs = Gdx.app.getPreferences("hybrid-arcade-shooter");
     input = new InputController();
+    assets = new AssetRepository();
     setScreen(new MenuScreen(this));
   }
 
@@ -39,6 +42,7 @@ public class GameRoot extends Game {
     shapes.dispose();
     font.dispose();
     input.dispose();
+    assets.dispose();
   }
 
   public int getHighScore() {
